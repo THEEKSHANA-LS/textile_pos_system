@@ -10,6 +10,7 @@ const productSchema = new mongoose.Schema({
   size: { type: String },
   color: { type: String },
   barcode: { type: String },
+  image: { type: String },
 }, {
   timestamps: true
 });

@@ -37,11 +37,16 @@ const Dashboard = () => {
     <div className="space-y-6 max-w-7xl mx-auto">
       <h2 className="text-3xl font-bold text-gray-800 tracking-tight">Dashboard Overview</h2>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard title="Total Revenue" value={`$${summary?.totalRevenue?.toFixed(2) || '0.00'}`} icon={<TrendingUp size={28} className="text-emerald-600" />} bgColor="bg-emerald-100" />
-        <StatCard title="Total Orders" value={summary?.totalOrders || 0} icon={<ShoppingBag size={28} className="text-blue-600" />} bgColor="bg-blue-100" />
-        <StatCard title="Products" value={summary?.totalProducts || 0} icon={<Package size={28} className="text-indigo-600" />} bgColor="bg-indigo-100" />
-        <StatCard title="Customers" value={summary?.totalCustomers || 0} icon={<Users size={28} className="text-orange-600" />} bgColor="bg-orange-100" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <StatCard title="Today's Revenue" value={`Rs. ${summary?.todayRevenue?.toFixed(2) || '0.00'}`} icon={<TrendingUp size={28} className="text-emerald-600" />} bgColor="bg-emerald-100" />
+        <StatCard title="Monthly Revenue" value={`Rs. ${summary?.monthRevenue?.toFixed(2) || '0.00'}`} icon={<TrendingUp size={28} className="text-blue-600" />} bgColor="bg-blue-100" />
+        <StatCard title="Annual Revenue" value={`Rs. ${summary?.yearRevenue?.toFixed(2) || '0.00'}`} icon={<TrendingUp size={28} className="text-purple-600" />} bgColor="bg-purple-100" />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <StatCard title="Total Orders" value={summary?.totalOrders || 0} icon={<ShoppingBag size={28} className="text-orange-600" />} bgColor="bg-orange-100" />
+        <StatCard title="Total Products" value={summary?.totalProducts || 0} icon={<Package size={28} className="text-indigo-600" />} bgColor="bg-indigo-100" />
+        <StatCard title="Total Customers" value={summary?.totalCustomers || 0} icon={<Users size={28} className="text-rose-600" />} bgColor="bg-rose-100" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -58,10 +63,10 @@ const Dashboard = () => {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#6b7280' }} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tickFormatter={(val) => `$${val}`} tick={{ fill: '#6b7280' }} dx={-10} />
+                <YAxis axisLine={false} tickLine={false} tickFormatter={(val) => `Rs. ${val}`} tick={{ fill: '#6b7280' }} dx={-10} />
                 <Tooltip 
                   contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                  formatter={(value) => [`$${value}`, 'Sales']}
+                  formatter={(value) => [`Rs. ${value}`, 'Sales']}
                 />
                 <Area type="monotone" dataKey="sales" stroke="#3b82f6" fillOpacity={1} fill="url(#colorSales)" strokeWidth={3} />
               </AreaChart>
@@ -90,6 +95,53 @@ const Dashboard = () => {
               </div>
             ))}
           </div>
+        </div>
+      </div>
+      
+      {/* Recent Transactions Section */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="p-6 border-b border-gray-100 flex justify-between items-center">
+          <h3 className="text-xl font-semibold text-gray-800">Recent Transactions</h3>
+          <button className="text-blue-600 hover:text-blue-700 text-sm font-bold transition-colors">View All Orders</button>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="bg-gray-50/50 text-gray-500 text-xs font-bold uppercase tracking-wider">
+                <th className="px-6 py-4">Invoice #</th>
+                <th className="px-6 py-4">Customer</th>
+                <th className="px-6 py-4">Amount</th>
+                <th className="px-6 py-4">Method</th>
+                <th className="px-6 py-4">Date</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {(!summary?.recentOrders || summary.recentOrders.length === 0) && (
+                <tr>
+                  <td colSpan="5" className="px-6 py-8 text-center text-gray-500">No recent transactions found.</td>
+                </tr>
+              )}
+              {summary?.recentOrders?.map(order => (
+                <tr key={order._id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 font-mono text-sm text-gray-600">{order.invoiceNumber}</td>
+                  <td className="px-6 py-4">
+                    <span className="font-semibold text-gray-800">{order.customer?.name || 'Walk-in Customer'}</span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="text-blue-600 font-bold">Rs. {order.totalAmount.toFixed(2)}</span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-wider ${order.paymentMethod === 'Cash' ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100' : 'bg-blue-50 text-blue-700 ring-1 ring-blue-100'}`}>
+                      {order.paymentMethod}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-500">
+                    {new Date(order.createdAt).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

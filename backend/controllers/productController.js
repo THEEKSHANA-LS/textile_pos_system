@@ -12,8 +12,10 @@ const getProducts = async (req, res, next) => {
 const createProduct = async (req, res, next) => {
   try {
     const { name, category, brand, price, costPrice, stock, size, color, barcode } = req.body;
+    const image = req.file ? `/uploads/${req.file.filename}` : '';
+    
     const product = new Product({
-      name, category, brand, price, costPrice, stock, size, color, barcode
+      name, category, brand, price, costPrice, stock, size, color, barcode, image
     });
     const createdProduct = await product.save();
     res.status(201).json(createdProduct);
@@ -37,6 +39,10 @@ const updateProduct = async (req, res, next) => {
       product.size = size || product.size;
       product.color = color || product.color;
       product.barcode = barcode || product.barcode;
+
+      if (req.file) {
+        product.image = `/uploads/${req.file.filename}`;
+      }
 
       const updatedProduct = await product.save();
       res.json(updatedProduct);

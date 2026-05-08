@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { Plus, Search } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const Customers = () => {
   const [customers, setCustomers] = useState([]);
@@ -31,8 +32,9 @@ const Customers = () => {
       setShowModal(false);
       setFormData({ name: '', phone: '', email: '' });
       fetchCustomers();
+      toast.success('Customer added successfully!');
     } catch (error) {
-      alert('Error saving customer');
+      toast.error('Error saving customer');
     }
   };
 
@@ -41,12 +43,12 @@ const Customers = () => {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 min-h-[calc(100vh-100px)]">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Customer List</h2>
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 md:p-6 min-h-[calc(100vh-100px)]">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <h2 className="text-xl md:text-2xl font-bold text-gray-800">Customer List</h2>
         <button 
           onClick={() => setShowModal(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-lg flex items-center space-x-2 transition-colors"
+          className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-lg flex items-center justify-center space-x-2 transition-colors"
         >
           <Plus size={20} />
           <span>Add Customer</span>
